@@ -863,10 +863,11 @@
   }
 
   .fixly-logo-wrap {
-    background: #161616;
+    background: #1A1A1A;
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 0;
+    overflow: hidden;
   }
 
   .fixly-logo-wrap img {
