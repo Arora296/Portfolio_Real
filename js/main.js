@@ -1,5 +1,4 @@
-
-  /* ── CUSTOM CURSOR ── */
+/* ── CUSTOM CURSOR ── */
   const dot  = document.getElementById('cursor-dot');
   const ring = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
@@ -182,6 +181,7 @@
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
       const targetId = link.getAttribute('href');
+      if (!targetId || targetId.length < 2) return;
       const target = document.querySelector(targetId);
       if (!target) return;
       e.preventDefault();
@@ -240,7 +240,29 @@
     });
   });
 
-  /* Volunteer card dialogs */
+  /* Volunteer card dialogs (with photo gallery) */
+  function buildGallery(names, altText) {
+    const exts = ['jpg', 'jpeg', 'png', 'webp'];
+    const wrap = document.createElement('div');
+    wrap.className = 'modal-gallery' + (names.length === 1 ? ' single' : '');
+    names.forEach((name, n) => {
+      const fig = document.createElement('figure');
+      const img = document.createElement('img');
+      let i = 0;
+      img.alt = `${altText} photo ${n + 1}`;
+      img.loading = 'lazy';
+      img.onerror = () => {
+        i++;
+        if (i < exts.length) img.src = `images/${name}.${exts[i]}`;
+        else fig.remove();
+      };
+      img.src = `images/${name}.${exts[0]}`;
+      fig.appendChild(img);
+      wrap.appendChild(fig);
+    });
+    return wrap;
+  }
+
   document.querySelectorAll('.vol-card').forEach(card => {
     card.addEventListener('click', () => {
       openModal({
@@ -249,6 +271,8 @@
         sub: card.dataset.volOrg,
         bodyHTML: `<p>${card.dataset.volDesc}</p>`
       });
+      const names = (card.dataset.volImages || '').split(',').map(s => s.trim()).filter(Boolean);
+      if (names.length) modalBody.appendChild(buildGallery(names, card.dataset.volOrg));
     });
   });
 
